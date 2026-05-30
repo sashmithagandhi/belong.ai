@@ -36,8 +36,7 @@ where humans find where they truly belong.
 
 ## 🌑 Current Status
 
-> Version 1.0 — Building started: May 27, 2026
-> Core emotion detection system being built.
+> Version 1.0 — ✅ Live | Built with Python, NLTK, Streamlit
 
 ---
 
