@@ -38,6 +38,8 @@ where humans find where they truly belong.
 
 > Version 1.0 — ✅ Live | Built with Python, NLTK, Streamlit
 
+> Version 2.0 — ✅ Live | Emotional Matching + Pulse Spaces added
+
 ---
 
 ## 👩‍💻 Built by
