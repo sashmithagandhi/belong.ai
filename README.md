@@ -46,5 +46,4 @@ where humans find where they truly belong.
 
 **Sashmitha Gandhi**
 B.Sc. Computer Science with AI
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sashmithagandhi)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/sashmitha-gandhi-610bb7303)
+- 🌑 [belong.ai](https://github.com/sashmithagandhi/belong.ai) — Emotionally intelligent anonymous human connection ecosystem | V2.0 Live | [Demo](https://belongai-sasasa.streamlit.app)the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/sashmitha-gandhi-610bb7303)
