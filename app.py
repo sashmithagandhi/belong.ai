@@ -1,8 +1,11 @@
 import streamlit as st
+import base64
 from emotion_detector import detect_emotion
 from emotions.keywords import EMOTION_COLORS, EMOTION_DESCRIPTIONS
 from matching import find_matches
 from pulse_spaces import get_recommended_spaces
+from themes import THEMES, get_theme_css
+from auth import auth_gate
 
 # Page config
 st.set_page_config(
@@ -11,45 +14,76 @@ st.set_page_config(
     layout="centered"
 )
 
-# Custom styling
-st.markdown("""
-    <style>
-    .main {
-        background-color: #0f0f0f;
-    }
-    .stTextArea textarea {
-        background-color: #1a1a1a;
-        color: #ffffff;
-        border: 1px solid #333;
-        border-radius: 12px;
-        font-size: 16px;
-    }
-    .emotion-card {
-        padding: 24px;
-        border-radius: 16px;
-        text-align: center;
-        margin-top: 20px;
-    }
-    .match-card {
-        padding: 16px;
-        border-radius: 12px;
-        margin-bottom: 12px;
-        border: 1px solid #333;
-        background-color: #1a1a1a;
-    }
-    .pulse-card {
-        padding: 16px;
-        border-radius: 12px;
-        margin-bottom: 12px;
-        border: 1px solid #333;
-        background-color: #1a1a1a;
-    }
-    </style>
+# Theme selector in sidebar
+st.sidebar.markdown("""
+    <h3 style='color:#A78BFA;'>🎨 Choose Your Space</h3>
 """, unsafe_allow_html=True)
 
+st.sidebar.markdown("""
+    <p style='color:#6B7280; font-size:13px;'>
+    Upload your own background image</p>
+""", unsafe_allow_html=True)
+
+uploaded_bg = st.sidebar.file_uploader(
+    "Upload background",
+    type=["png", "jpg", "jpeg", "webp"],
+    label_visibility="collapsed"
+)
+
+selected_theme = st.sidebar.selectbox(
+    "Or choose a theme",
+    list(THEMES.keys()),
+    format_func=lambda x: f"{THEMES[x]['emoji']} {x}"
+)
+
+# Apply uploaded background or theme
+if uploaded_bg is not None:
+    bg_bytes = uploaded_bg.read()
+    bg_base64 = base64.b64encode(bg_bytes).decode()
+    ext = uploaded_bg.name.split('.')[-1]
+    st.markdown(f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/{ext};base64,{bg_base64}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }}
+        .stTextArea textarea {{
+            background-color: rgba(0,0,0,0.6);
+            color: #ffffff;
+            border: 1px solid #555;
+            border-radius: 12px;
+            font-size: 16px;
+        }}
+        .match-card {{
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #555;
+            background-color: rgba(0,0,0,0.6);
+        }}
+        .pulse-card {{
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #555;
+            background-color: rgba(0,0,0,0.6);
+        }}
+        </style>
+    """, unsafe_allow_html=True)
+    theme = THEMES["Midnight"]
+else:
+    st.markdown(get_theme_css(selected_theme), unsafe_allow_html=True)
+    theme = THEMES[selected_theme]
+
+# Auth gate
+if not auth_gate():
+    st.stop()
+
 # Header
-st.markdown("""
-    <h1 style='text-align: center; color: #A78BFA;
+st.markdown(f"""
+    <h1 style='text-align: center; color: {theme['accent']};
     font-size: 48px; margin-bottom: 0;'>belong.ai</h1>
     <p style='text-align: center; color: #6B7280;
     font-size: 16px; margin-top: 4px;'>
@@ -58,8 +92,8 @@ st.markdown("""
     <hr style='border: 1px solid #1f1f1f;'/>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-    <h3 style='color: #ffffff; font-size: 20px;'>
+st.markdown(f"""
+    <h3 style='color: {theme['text']}; font-size: 20px;'>
     📓 How are you feeling today?</h3>
     <p style='color: #6B7280; font-size: 14px;'>
     Write freely. No one is watching.
@@ -91,7 +125,7 @@ if st.button("✦ Understand my emotion", use_container_width=True):
             border: 1px solid {color};'>
                 <h2 style='color: {color};
                 font-size: 28px;'>{emotion_display}</h2>
-                <p style='color: #ffffff;
+                <p style='color: {theme['text']};
                 font-size: 16px;'>{description}</p>
             </div>
         """, unsafe_allow_html=True)
@@ -106,8 +140,8 @@ if st.button("✦ Understand my emotion", use_container_width=True):
         st.markdown("---")
 
         # Emotional Matches
-        st.markdown("""
-            <h3 style='color: #ffffff; font-size: 20px;
+        st.markdown(f"""
+            <h3 style='color: {theme['text']}; font-size: 20px;
             margin-top: 24px;'>
             👥 Your Emotional Matches</h3>
             <p style='color: #6B7280; font-size: 14px;'>
@@ -127,7 +161,7 @@ if st.button("✦ Understand my emotion", use_container_width=True):
                     justify-content: space-between;
                     align-items: center;'>
                         <div>
-                            <p style='color: #ffffff;
+                            <p style='color: {theme['text']};
                             font-size: 16px;
                             font-weight: bold;
                             margin: 0;'>🌑 {match['alias']}</p>
@@ -137,7 +171,7 @@ if st.button("✦ Understand my emotion", use_container_width=True):
                             {match_emotion_display}</p>
                         </div>
                         <div style='text-align: right;'>
-                            <p style='color: #A78BFA;
+                            <p style='color: {theme['accent']};
                             font-size: 22px;
                             font-weight: bold;
                             margin: 0;'>
@@ -154,8 +188,8 @@ if st.button("✦ Understand my emotion", use_container_width=True):
         st.markdown("---")
 
         # Pulse Spaces
-        st.markdown("""
-            <h3 style='color: #ffffff; font-size: 20px;
+        st.markdown(f"""
+            <h3 style='color: {theme['text']}; font-size: 20px;
             margin-top: 24px;'>
             🌐 Your Pulse Spaces</h3>
             <p style='color: #6B7280; font-size: 14px;'>
@@ -179,3 +213,10 @@ if st.button("✦ Understand my emotion", use_container_width=True):
                     {space["description"]}</p>
                 </div>
             """, unsafe_allow_html=True)
+
+# Sidebar logout
+st.sidebar.markdown("---")
+if st.sidebar.button("🔒 Lock Diary"):
+    st.session_state.authenticated = False
+    st.rerun()
+    
