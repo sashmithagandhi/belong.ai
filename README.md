@@ -40,6 +40,8 @@ where humans find where they truly belong.
 
 > Version 2.0 — ✅ Live | Emotional Matching + Pulse Spaces added
 
+> Version 3.0 — ✅ Live | Custom Backgrounds, Themes & Password Protection added
+
 ---
 
 ## 👩‍💻 Built by
