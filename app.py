@@ -6,6 +6,8 @@ from matching import find_matches
 from pulse_spaces import get_recommended_spaces
 from themes import THEMES, get_theme_css
 from auth import auth_gate
+from gamification import add_entry, load_data, BADGES
+from growth_tracker import plot_emotion_timeline, plot_emotion_distribution, get_stats
 
 # Page config
 st.set_page_config(
@@ -81,6 +83,10 @@ else:
 if not auth_gate():
     st.stop()
 
+# Load user data
+data = load_data()
+total_entries, streak, total_badges, unique_emotions = get_stats(data)
+
 # Header
 st.markdown(f"""
     <h1 style='text-align: center; color: {theme['accent']};
@@ -92,6 +98,45 @@ st.markdown(f"""
     <hr style='border: 1px solid #1f1f1f;'/>
 """, unsafe_allow_html=True)
 
+# Stats row
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.metric("📝 Entries", total_entries)
+with col2:
+    st.metric("🔥 Streak", f"{streak} days")
+with col3:
+    st.metric("🏆 Badges", total_badges)
+with col4:
+    st.metric("🎭 Emotions", unique_emotions)
+
+st.markdown("---")
+
+# Badges section
+if data.get("badges"):
+    st.markdown(f"""
+        <h3 style='color: {theme['accent']}; font-size: 18px;'>
+        🏆 Your Badges</h3>
+    """, unsafe_allow_html=True)
+
+    badge_cols = st.columns(len(data["badges"]))
+    for i, badge_id in enumerate(data["badges"]):
+        badge = BADGES[badge_id]
+        with badge_cols[i]:
+            st.markdown(f"""
+                <div style='text-align: center; padding: 10px;
+                background-color: {theme['surface']};
+                border-radius: 12px;
+                border: 1px solid {theme['accent']};'>
+                    <p style='font-size: 28px; margin: 0;'>
+                    {badge['emoji']}</p>
+                    <p style='color: {theme['accent']};
+                    font-size: 11px; margin: 4px 0 0 0;
+                    font-weight: bold;'>{badge['name']}</p>
+                </div>
+            """, unsafe_allow_html=True)
+    st.markdown("---")
+
+# Diary section
 st.markdown(f"""
     <h3 style='color: {theme['text']}; font-size: 20px;'>
     📓 How are you feeling today?</h3>
@@ -117,6 +162,19 @@ if st.button("✦ Understand my emotion", use_container_width=True):
         color = EMOTION_COLORS[emotion]
         description = EMOTION_DESCRIPTIONS[emotion]
         emotion_display = emotion.replace("_", " ").title()
+
+        # Save entry and check badges
+        data, newly_earned = add_entry(emotion, diary_entry)
+
+        # Show newly earned badges
+        if newly_earned:
+            for badge_id in newly_earned:
+                badge = BADGES[badge_id]
+                st.balloons()
+                st.success(
+                    f"🏆 Badge Unlocked: {badge['emoji']} "
+                    f"{badge['name']} — {badge['description']}"
+                )
 
         # Emotion card
         st.markdown(f"""
@@ -213,6 +271,25 @@ if st.button("✦ Understand my emotion", use_container_width=True):
                     {space["description"]}</p>
                 </div>
             """, unsafe_allow_html=True)
+
+# Growth tracking section
+st.markdown("---")
+st.markdown(f"""
+    <h3 style='color: {theme['accent']}; font-size: 20px;'>
+    📊 Your Emotional Growth</h3>
+    <p style='color: #6B7280; font-size: 14px;'>
+    Track your emotional journey over time.</p>
+""", unsafe_allow_html=True)
+
+timeline = plot_emotion_timeline()
+if timeline:
+    st.plotly_chart(timeline, use_container_width=True)
+else:
+    st.info("Write your first entry to start tracking your emotional journey!")
+
+distribution = plot_emotion_distribution()
+if distribution:
+    st.plotly_chart(distribution, use_container_width=True)
 
 # Sidebar logout
 st.sidebar.markdown("---")
