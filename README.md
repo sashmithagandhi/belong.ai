@@ -42,6 +42,8 @@ where humans find where they truly belong.
 
 > Version 3.0 — ✅ Live | Custom Backgrounds, Themes & Password Protection added
 
+> Version 4.0 — ✅ Live | Badges, Streaks & Emotional Growth Tracking added
+
 ---
 
 ## 👩‍💻 Built by

@@ -4,14 +4,98 @@
       "date": "2026-06-05",
       "emotion": "emotionally_open",
       "text": "i feel soooooo very much happy. feeling ecstatic"
+    },
+    {
+      "date": "2026-06-06",
+      "emotion": "emotionally_masked",
+      "text": "im going out of station ofr my internship. i feel completely fine like im finally gonna fly away"
+    },
+    {
+      "date": "2026-06-06",
+      "emotion": "hyperreflective",
+      "text": "i dont wanna say anything. i trieed i did.  enough"
+    },
+    {
+      "date": "2026-06-06",
+      "emotion": "hyperreflective",
+      "text": "huhhh so exhaustic but i still gotten try right. "
+    },
+    {
+      "date": "2026-06-06",
+      "emotion": "hyperreflective",
+      "text": "i will  say nthg literally nthg to you"
+    },
+    {
+      "date": "2026-06-06",
+      "emotion": "hyperreflective",
+      "text": "nthg more mthg less"
+    },
+    {
+      "date": "2026-06-06",
+      "emotion": "hyperreflective",
+      "text": "today went so good wowwwww"
+    },
+    {
+      "date": "2026-06-07",
+      "emotion": "hyperreflective",
+      "text": "travelled to different place today. feels normal actually"
+    },
+    {
+      "date": "2026-06-07",
+      "emotion": "hyperreflective",
+      "text": "nooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+    },
+    {
+      "date": "2026-06-07",
+      "emotion": "hyperreflective",
+      "text": "yesssssssssssssssssssssssssssssssssssssssssssssss"
+    },
+    {
+      "date": "2026-06-08",
+      "emotion": "hyperreflective",
+      "text": "nooooo"
+    },
+    {
+      "date": "2026-06-08",
+      "emotion": "hyperreflective",
+      "text": "nooooo"
+    },
+    {
+      "date": "2026-06-08",
+      "emotion": "hyperreflective",
+      "text": "nooooo"
+    },
+    {
+      "date": "2026-06-08",
+      "emotion": "hyperreflective",
+      "text": "ohooooo"
+    },
+    {
+      "date": "2026-06-09",
+      "emotion": "emotionally_open",
+      "text": "very happy day"
+    },
+    {
+      "date": "2026-06-09",
+      "emotion": "emotionally_open",
+      "text": "yayy tomorrow is my first day in internship and i am really excited for it"
+    },
+    {
+      "date": "2026-06-09",
+      "emotion": "emotionally_open",
+      "text": "i spoke with my bf. seems like he misses me and im happy to hear it coz he loves me so mmuch laaa"
     }
   ],
-  "streak": 1,
-  "last_entry_date": "2026-06-05",
+  "streak": 5,
+  "last_entry_date": "2026-06-09",
   "badges": [
-    "first_entry"
+    "first_entry",
+    "three_day_streak",
+    "ten_entries"
   ],
   "emotions_experienced": [
-    "emotionally_open"
+    "emotionally_open",
+    "emotionally_masked",
+    "hyperreflective"
   ]
 }

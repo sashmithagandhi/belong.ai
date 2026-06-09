@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+from datetime import date
 from emotion_detector import detect_emotion
 from emotions.keywords import EMOTION_COLORS, EMOTION_DESCRIPTIONS
 from matching import find_matches
@@ -8,6 +9,9 @@ from themes import THEMES, get_theme_css
 from auth import auth_gate
 from gamification import add_entry, load_data, BADGES
 from growth_tracker import plot_emotion_timeline, plot_emotion_distribution, get_stats
+from emotional_wrapped import generate_wrapped, plot_wrapped_chart, is_wrapped_season
+from storyteller import generate_story, STORY_STYLES
+from pulse_chat import render_chat
 
 # Page config
 st.set_page_config(
@@ -257,20 +261,11 @@ if st.button("✦ Understand my emotion", use_container_width=True):
         spaces = get_recommended_spaces(emotion)
 
         for space in spaces:
-            st.markdown(f"""
-                <div class='pulse-card'
-                style='border-left: 3px solid {space["color"]};'>
-                    <p style='color: {space["color"]};
-                    font-size: 18px;
-                    font-weight: bold;
-                    margin: 0;'>
-                    {space["emoji"]} {space["name"]}</p>
-                    <p style='color: #8b949e;
-                    font-size: 13px;
-                    margin: 6px 0 0 0;'>
-                    {space["description"]}</p>
-                </div>
-            """, unsafe_allow_html=True)
+            with st.expander(
+                f"{space['emoji']} {space['name']} — tap to enter",
+                expanded=False
+            ):
+                render_chat(space, theme)
 
 # Growth tracking section
 st.markdown("---")
@@ -290,6 +285,143 @@ else:
 distribution = plot_emotion_distribution()
 if distribution:
     st.plotly_chart(distribution, use_container_width=True)
+
+# Emotional Wrapped Section
+st.markdown("---")
+st.markdown(f"""
+    <h3 style='color: {theme['accent']}; font-size: 20px;'>
+    🎬 Your Emotional Wrapped</h3>
+    <p style='color: #6B7280; font-size: 14px;'>
+    Your emotional story this month.</p>
+""", unsafe_allow_html=True)
+
+if is_wrapped_season():
+    wrapped = generate_wrapped()
+    if wrapped:
+        st.markdown(f"""
+            <div style='background: linear-gradient(135deg,
+            {wrapped["dominant_color"]}20, #0f0f0f);
+            border: 1px solid {wrapped["dominant_color"]};
+            border-radius: 16px; padding: 24px;
+            text-align: center; margin-bottom: 20px;'>
+                <p style='color: #6B7280; font-size: 13px;
+                margin: 0;'>{wrapped["month"]}</p>
+                <h2 style='color: {wrapped["dominant_color"]};
+                font-size: 32px; margin: 8px 0;'>
+                {wrapped["dominant_display"]}</h2>
+                <p style='color: #ffffff; font-size: 15px;
+                margin: 0;'>Your dominant emotion this month</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.markdown(f"""
+                <div style='text-align: center; padding: 16px;
+                background-color: #1a1a1a;
+                border-radius: 12px;'>
+                    <p style='color: {theme["accent"]};
+                    font-size: 28px; font-weight: bold;
+                    margin: 0;'>{wrapped["total_entries"]}</p>
+                    <p style='color: #6B7280; font-size: 12px;
+                    margin: 4px 0 0 0;'>Entries Written</p>
+                </div>
+            """, unsafe_allow_html=True)
+        with col2:
+            st.markdown(f"""
+                <div style='text-align: center; padding: 16px;
+                background-color: #1a1a1a;
+                border-radius: 12px;'>
+                    <p style='color: {theme["accent"]};
+                    font-size: 28px; font-weight: bold;
+                    margin: 0;'>{wrapped["streak"]}</p>
+                    <p style='color: #6B7280; font-size: 12px;
+                    margin: 4px 0 0 0;'>Day Streak</p>
+                </div>
+            """, unsafe_allow_html=True)
+        with col3:
+            st.markdown(f"""
+                <div style='text-align: center; padding: 16px;
+                background-color: #1a1a1a;
+                border-radius: 12px;'>
+                    <p style='color: {theme["accent"]};
+                    font-size: 28px; font-weight: bold;
+                    margin: 0;'>{len(wrapped["badges"])}</p>
+                    <p style='color: #6B7280; font-size: 12px;
+                    margin: 4px 0 0 0;'>Badges Earned</p>
+                </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+            <p style='color: #ffffff; font-size: 15px;
+            text-align: center; margin-top: 20px;
+            font-style: italic;'>
+            "{wrapped["growth_message"]}"</p>
+        """, unsafe_allow_html=True)
+
+        wrapped_chart = plot_wrapped_chart(wrapped)
+        if wrapped_chart:
+            st.plotly_chart(wrapped_chart, use_container_width=True)
+    else:
+        st.info("Write at least one entry this month to see your Emotional Wrapped!")
+else:
+    days_left = 25 - date.today().day
+    st.markdown(f"""
+        <div style='text-align: center; padding: 20px;
+        background-color: #1a1a1a;
+        border-radius: 16px;
+        border: 1px solid #333;'>
+            <p style='font-size: 28px; margin: 0;'>🎬</p>
+            <p style='color: #A78BFA; font-size: 16px;
+            font-weight: bold; margin: 8px 0;'>
+            Emotional Wrapped arrives in {days_left} days</p>
+            <p style='color: #6B7280; font-size: 13px;
+            margin: 0;'>Your monthly emotional story is being written.
+            Keep journaling.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+# Emotional Storytelling Section
+st.markdown("---")
+st.markdown(f"""
+    <h3 style='color: {theme['accent']}; font-size: 20px;'>
+    📖 Your Life Chapter</h3>
+    <p style='color: #6B7280; font-size: 14px;'>
+    Let AI turn your emotional journey into a story.</p>
+""", unsafe_allow_html=True)
+
+story_style = st.selectbox(
+    "Choose your story style",
+    list(STORY_STYLES.keys())
+)
+
+if st.button("✦ Generate My Story", use_container_width=True):
+    if len(data.get("entries", [])) == 0:
+        st.warning("Write at least one diary entry first!")
+    else:
+        with st.spinner("Writing your story..."):
+            story = generate_story(story_style)
+            if story:
+                st.markdown(f"""
+                    <div style='background: linear-gradient(135deg,
+                    #A78BFA20, #0f0f0f);
+                    border: 1px solid #A78BFA;
+                    border-radius: 16px;
+                    padding: 32px;
+                    margin-top: 16px;'>
+                        <p style='color: #A78BFA;
+                        font-size: 12px;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        margin: 0 0 16px 0;'>
+                        {story_style} — Your Chapter</p>
+                        <p style='color: #ffffff;
+                        font-size: 16px;
+                        line-height: 1.8;
+                        font-style: italic;
+                        margin: 0;'>{story}</p>
+                    </div>
+                """, unsafe_allow_html=True)
 
 # Sidebar logout
 st.sidebar.markdown("---")
